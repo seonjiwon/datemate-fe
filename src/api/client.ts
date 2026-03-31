@@ -2,7 +2,7 @@ import axios from "axios";
 import type { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { API_BASE_URL, API_VERSION, ENDPOINTS } from "@/src/constants/api";
 import { storage, KEYS } from "@/src/utils/storage";
-import type { ApiError, ApiResponse } from "@/src/types/api";
+import type { ApiError } from "@/src/types/api";
 import type { RefreshTokenResponse } from "@/src/types/auth";
 
 /**
@@ -12,8 +12,11 @@ import type { RefreshTokenResponse } from "@/src/types/auth";
  * 3. 응답 인터셉터: 401 시 토큰 갱신 → 실패 시 로그아웃
  */
 
+const fullBaseURL = `${API_BASE_URL}${API_VERSION}`;
+console.log("[apiClient] baseURL =", fullBaseURL);
+
 export const apiClient = axios.create({
-  baseURL: `${API_BASE_URL}${API_VERSION}`,
+  baseURL: fullBaseURL,
   timeout: 30_000,
   headers: { "Content-Type": "application/json" },
 });
@@ -65,16 +68,16 @@ apiClient.interceptors.response.use(
       const refreshToken = await storage.get(KEYS.REFRESH_TOKEN);
       if (!refreshToken) throw new Error("No refresh token");
 
-      const { data } = await axios.post<ApiResponse<RefreshTokenResponse>>(
+      const { data } = await axios.post<{ isSuccess: boolean; result: RefreshTokenResponse }>(
         `${API_BASE_URL}${API_VERSION}${ENDPOINTS.AUTH.REFRESH}`,
         { refreshToken }
       );
 
-      const newAccessToken = data.data.accessToken;
+      const newAccessToken = data.result.accessToken;
 
       // 4. 새 토큰 저장
       await storage.set(KEYS.ACCESS_TOKEN, newAccessToken);
-      await storage.set(KEYS.REFRESH_TOKEN, data.data.refreshToken);
+      await storage.set(KEYS.REFRESH_TOKEN, data.result.refreshToken);
 
       // 5. 대기 중이던 요청들에 새 토큰 전달
       pendingRequests.forEach((cb) => cb(newAccessToken));

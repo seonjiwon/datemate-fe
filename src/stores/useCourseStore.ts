@@ -27,8 +27,7 @@ interface CourseFlowState {
   mood: Mood | null;
   transport: Transport | null;
 
-  // ── 4단계: 결과 ──
-  courseRequestId: number | null;
+  // ── 4단계: 결과 (단일 코스 또는 배열) ──
   courseResults: Course[];
 }
 
@@ -57,8 +56,8 @@ interface CourseFlowActions {
     transport: Transport;
   }) => void;
 
-  /** AI 코스 결과 설정 */
-  setCourseResults: (requestId: number, courses: Course[]) => void;
+  /** AI 코스 결과 설정 — 단일 코스도 배열로 감싸서 저장 */
+  setCourseResults: (courses: Course[]) => void;
 
   /** 전체 상태 초기화 */
   reset: () => void;
@@ -77,7 +76,6 @@ const initialState: CourseFlowState = {
   budgetMax: 50_000,
   mood: null,
   transport: null,
-  courseRequestId: null,
   courseResults: [],
 };
 
@@ -94,8 +92,8 @@ export const useCourseStore = create<CourseFlowState & CourseFlowActions>(
 
     setConditions: (params) => set(params),
 
-    setCourseResults: (requestId, courses) =>
-      set({ courseRequestId: requestId, courseResults: courses }),
+    setCourseResults: (courses) =>
+      set({ courseResults: courses }),
 
     reset: () => set(initialState),
   })

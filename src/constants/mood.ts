@@ -32,10 +32,10 @@ export const TRANSPORT_OPTIONS: { value: Transport; label: string }[] = [
   { value: "CAR", label: "자차" },
 ];
 
-/** 예산 프리셋 (1인 기준, 원) */
+/** 예산 프리셋 (1인 기준, 원) — 디자인 시안 라벨 반영 */
 export const BUDGET_PRESETS = [
-  { label: "1만원 이하", min: 0, max: 10000 },
-  { label: "1~3만원", min: 10000, max: 30000 },
+  { label: "~3만원", min: 0, max: 30000 },
   { label: "3~5만원", min: 30000, max: 50000 },
-  { label: "5만원 이상", min: 50000, max: 100000 },
+  { label: "5~10만원", min: 50000, max: 100000 },
+  { label: "상관없음", min: 0, max: 999999 },
 ];

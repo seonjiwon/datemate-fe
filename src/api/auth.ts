@@ -20,7 +20,7 @@ export const login = async (params: LoginRequest): Promise<LoginResponse> => {
     ENDPOINTS.AUTH.LOGIN,
     params
   );
-  return data.data;
+  return data.result;
 };
 
 /** 로그아웃: 서버에 리프레시 토큰 무효화 요청 */
@@ -33,5 +33,5 @@ export const getProfile = async (): Promise<MemberProfile> => {
   const { data } = await apiClient.get<ApiResponse<MemberProfile>>(
     ENDPOINTS.AUTH.PROFILE
   );
-  return data.data;
+  return data.result;
 };

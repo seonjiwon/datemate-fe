@@ -28,7 +28,6 @@ export default function CourseDetailScreen() {
 
   const loadCourse = async () => {
     try {
-      // 1. 코스 상세 데이터 조회
       const courseId = Number(id);
       if (isNaN(courseId)) throw new Error("Invalid course ID");
 
@@ -41,13 +40,10 @@ export default function CourseDetailScreen() {
     }
   };
 
-  // 2. 카카오톡 공유
   const handleShare = async () => {
     if (!course) return;
-
     try {
-      // TODO: 카카오톡 공유 SDK 연동
-      const shareResponse = await courseApi.shareCourse(course.id);
+      const shareResponse = await courseApi.shareCourse(course.courseId);
       Alert.alert("공유 링크 생성됨", shareResponse.shareUrl);
     } catch (error) {
       Alert.alert("오류", "공유 링크 생성에 실패했습니다.");
@@ -58,23 +54,29 @@ export default function CourseDetailScreen() {
     return <Loading message="코스 정보를 불러오는 중..." />;
   }
 
+  const costDisplay =
+    course.totalCostMax > course.totalCostMin
+      ? `${formatCost(course.totalCostMin)}~${formatCost(course.totalCostMax)}`
+      : formatCost(course.totalCostMin);
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* 1. 코스 요약 */}
         <View style={styles.summary}>
-          <Text style={styles.title}>데이트 코스</Text>
+          <Text style={styles.title}>{course.title || "데이트 코스"}</Text>
+          {course.description && (
+            <Text style={styles.desc}>{course.description}</Text>
+          )}
           <View style={styles.summaryRow}>
             <Text style={styles.summaryItem}>
               {formatDuration(course.totalDuration)}
             </Text>
             <Text style={styles.summaryDivider}>|</Text>
-            <Text style={styles.summaryItem}>
-              {formatCost(course.totalEstimatedCost)}
-            </Text>
+            <Text style={styles.summaryItem}>{costDisplay}</Text>
             <Text style={styles.summaryDivider}>|</Text>
             <Text style={styles.summaryItem}>
-              {course.placeCount}곳
+              {course.places.length}곳
             </Text>
           </View>
         </View>
@@ -83,8 +85,9 @@ export default function CourseDetailScreen() {
         <View style={styles.timeline}>
           {course.places.map((place, index) => (
             <PlaceItem
-              key={place.id}
+              key={index}
               place={place}
+              isFirst={index === 0}
               isLast={index === course.places.length - 1}
             />
           ))}
@@ -118,7 +121,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "800",
     color: COLORS.textPrimary,
+    marginBottom: 6,
+  },
+  desc: {
+    fontSize: 13,
+    color: COLORS.textTertiary,
     marginBottom: 12,
+    lineHeight: 18,
   },
   summaryRow: {
     flexDirection: "row",
@@ -128,7 +137,7 @@ const styles = StyleSheet.create({
   summaryItem: {
     fontSize: 15,
     fontWeight: "600",
-    color: COLORS.primaryLight,
+    color: COLORS.primary,
   },
   summaryDivider: {
     color: COLORS.border,

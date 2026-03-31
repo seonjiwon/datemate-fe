@@ -7,10 +7,10 @@ import { useAuthStore } from "@/src/stores/useAuthStore";
 import { useCourseStore } from "@/src/stores/useCourseStore";
 
 /**
- * 홈 화면
- * 1. 환영 메시지 (닉네임 표시)
- * 2. 코스 생성 시작 버튼
- * 3. 버튼 터치 시 코스 스토어 초기화 후 출발지 입력 화면으로 이동
+ * 홈 화면 — 데이트길 메인
+ * 1. 코랄 하트 로고 + 환영 메시지
+ * 2. 코스 생성 시작 CTA
+ * 3. 코랄 테마 적용
  */
 
 export default function HomeScreen() {
@@ -19,24 +19,27 @@ export default function HomeScreen() {
   const router = useRouter();
 
   const handleStartCourse = () => {
-    // 1. 이전 플로우 데이터 초기화
     reset();
-
-    // 2. 출발지 입력 화면으로 이동
     router.push("/course/origin");
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* 1. 환영 메시지 */}
+      {/* 1. 헤더 + 브랜딩 */}
       <View style={styles.header}>
+        <View style={styles.brandRow}>
+          <View style={styles.logoSmall}>
+            <Text style={styles.logoHeart}>{"\u2764"}</Text>
+          </View>
+          <Text style={styles.brandName}>데이트길</Text>
+        </View>
         <Text style={styles.greeting}>
           {nickname ? `${nickname}님,` : "안녕하세요,"}
         </Text>
         <Text style={styles.title}>오늘은 어디로 갈까요?</Text>
       </View>
 
-      {/* 2. 코스 생성 시작 */}
+      {/* 2. 코스 생성 CTA */}
       <View style={styles.cta}>
         <Text style={styles.ctaDescription}>
           두 사람의 출발지를 입력하면{"\n"}
@@ -60,6 +63,29 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: 20,
     marginBottom: 40,
+  },
+  brandRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 20,
+  },
+  logoSmall: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: COLORS.primary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logoHeart: {
+    fontSize: 14,
+    color: COLORS.textInverse,
+  },
+  brandName: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: COLORS.textPrimary,
   },
   greeting: {
     fontSize: 16,

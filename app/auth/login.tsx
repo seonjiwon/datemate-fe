@@ -5,31 +5,23 @@ import { COLORS } from "@/src/constants/colors";
 import { useAuthStore } from "@/src/stores/useAuthStore";
 
 /**
- * 로그인 화면
- * 1. 카카오 로그인 버튼
- * 2. Apple 로그인 버튼
- * 3. 소셜 SDK 연동 전까지는 TODO 알림으로 대체
+ * 로그인 화면 — 데이트길 브랜딩
+ * 1. 코랄 하트 로고 + 데이트길 타이틀
+ * 2. 카카오 노란 버튼 + Apple 검정 버튼
+ * 3. 하단 이용약관 안내
  */
 
 export default function LoginScreen() {
   const { login } = useAuthStore();
 
-  // 1. 카카오 로그인 핸들러 (SDK 연동 전 placeholder)
   const handleKakaoLogin = async () => {
-    // TODO: @react-native-seoul/kakao-login 연동 후 교체
-    // const result = await KakaoLogin.login();
-    // await login(result.accessToken, "KAKAO");
     Alert.alert(
       "카카오 로그인",
       "카카오 네이티브 SDK 연동 후 활성화됩니다.\nEAS Development Build가 필요합니다."
     );
   };
 
-  // 2. Apple 로그인 핸들러 (SDK 연동 전 placeholder)
   const handleAppleLogin = async () => {
-    // TODO: expo-apple-authentication 연동 후 교체
-    // const credential = await AppleAuthentication.signInAsync({ ... });
-    // await login(credential.identityToken, "APPLE");
     Alert.alert(
       "Apple 로그인",
       "expo-apple-authentication 연동 후 활성화됩니다.\nEAS Development Build가 필요합니다."
@@ -38,11 +30,14 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* 1. 브랜딩 영역 */}
+      {/* 1. 브랜딩 영역 — 하트 로고 + 데이트길 */}
       <View style={styles.branding}>
-        <Text style={styles.title}>DateMate</Text>
+        <View style={styles.logo}>
+          <Text style={styles.logoHeart}>{"\u2764"}</Text>
+        </View>
+        <Text style={styles.title}>데이트길</Text>
         <Text style={styles.subtitle}>
-          AI가 추천하는 완벽한 데이트 코스
+          AI가 찾아주는{"\n"}완벽한 데이트 코스
         </Text>
       </View>
 
@@ -51,19 +46,18 @@ export default function LoginScreen() {
         <Button
           title="카카오로 시작하기"
           onPress={handleKakaoLogin}
-          style={styles.kakaoButton}
+          variant="kakao"
         />
         <Button
           title="Apple로 시작하기"
           onPress={handleAppleLogin}
-          variant="outline"
-          style={styles.appleButton}
+          variant="apple"
         />
       </View>
 
       {/* 3. 하단 안내 */}
       <Text style={styles.notice}>
-        로그인 시 서비스 이용약관 및 개인정보 처리방침에 동의합니다.
+        시작하면 이용약관 및 개인정보처리방침에{"\n"}동의하는 것으로 간주합니다.
       </Text>
     </SafeAreaView>
   );
@@ -80,30 +74,40 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  logo: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: COLORS.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  logoHeart: {
+    fontSize: 26,
+    color: COLORS.textInverse,
+  },
   title: {
-    fontSize: 40,
-    fontWeight: "800",
-    color: COLORS.primary,
-    marginBottom: 8,
+    fontSize: 24,
+    fontWeight: "700",
+    color: COLORS.textPrimary,
+    marginBottom: 6,
   },
   subtitle: {
-    fontSize: 16,
-    color: COLORS.textSecondary,
+    fontSize: 13,
+    color: COLORS.textTertiary,
+    textAlign: "center",
+    lineHeight: 20,
   },
   buttons: {
-    gap: 12,
+    gap: 10,
     marginBottom: 24,
-  },
-  kakaoButton: {
-    backgroundColor: "#FEE500",
-  },
-  appleButton: {
-    borderColor: COLORS.textPrimary,
   },
   notice: {
     fontSize: 11,
-    color: COLORS.textTertiary,
+    color: COLORS.textMuted,
     textAlign: "center",
-    marginBottom: 16,
+    lineHeight: 18,
+    marginBottom: 20,
   },
 });

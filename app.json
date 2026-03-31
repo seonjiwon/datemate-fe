@@ -11,17 +11,20 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#1B3A5C"
+      "backgroundColor": "#FFFFFF"
     },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.datemate.app",
-      "usesAppleSignIn": true
+      "usesAppleSignIn": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "데이트 코스 지도에서 현재 위치를 표시하기 위해 위치 정보가 필요합니다."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#1B3A5C"
+        "backgroundColor": "#FFFFFF"
       },
       "package": "com.datemate.app",
       "edgeToEdgeEnabled": true

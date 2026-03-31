@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: COLORS.primaryBg,
+    backgroundColor: COLORS.primaryLight,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,

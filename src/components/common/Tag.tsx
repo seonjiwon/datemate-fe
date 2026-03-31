@@ -3,8 +3,9 @@ import { COLORS } from "@/src/constants/colors";
 
 /**
  * 공용 태그 컴포넌트
- * 1. 선택 가능한 태그 (onPress + selected)
- * 2. 커스텀 컬러 지원 (분위기 태그 등)
+ * 1. 선택 가능한 필(pill) 태그 — 코랄 테마
+ * 2. 선택 시 배경 코랄 + 흰색 텍스트
+ * 3. 미선택 시 흰색 배경 + 보더
  */
 
 interface TagProps {
@@ -20,13 +21,16 @@ export default function Tag({
   onPress,
   color,
 }: TagProps) {
-  const activeColor = color || COLORS.primaryLight;
+  const activeColor = color || COLORS.primary;
 
   return (
     <TouchableOpacity
       style={[
         styles.tag,
-        selected && { backgroundColor: activeColor, borderColor: activeColor },
+        selected && {
+          backgroundColor: activeColor,
+          borderColor: activeColor,
+        },
       ]}
       onPress={onPress}
       activeOpacity={0.7}
@@ -51,9 +55,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   text: {
-    fontSize: 14,
+    fontSize: 13,
     color: COLORS.textSecondary,
-    fontWeight: "500",
+    fontWeight: "600",
   },
   textSelected: {
     color: COLORS.textInverse,

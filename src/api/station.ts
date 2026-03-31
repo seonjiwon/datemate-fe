@@ -1,20 +1,23 @@
-import { apiClient } from "./client";
-import { ENDPOINTS } from "@/src/constants/api";
-import type { ApiResponse } from "@/src/types/api";
 import type { StationRequest, StationResponse } from "@/src/types/station";
+import { MOCK_STATION_RESPONSE } from "./__mock__/data";
 
 /**
- * 중간역 API
- * 1. 두 출발지 좌표를 보내서 중간역 후보 2~3개를 받아온다
+ * 중간역 API (Mock 모드)
+ * 1. 백엔드 미연동 상태에서 mock 데이터를 반환한다
+ * 2. 500ms 딜레이로 네트워크 지연을 시뮬레이션한다
+ *
+ * TODO: 백엔드 연동 시 apiClient.post 호출로 교체
  */
 
-/** 중간역 추천 요청 */
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/** 중간역 추천 요청 (mock) */
 export const recommendStations = async (
-  params: StationRequest
+  _params: StationRequest
 ): Promise<StationResponse> => {
-  const { data } = await apiClient.post<ApiResponse<StationResponse>>(
-    ENDPOINTS.STATION.RECOMMEND,
-    params
-  );
-  return data.data;
+  // 1. 네트워크 지연 시뮬레이션
+  await delay(500);
+
+  // 2. mock 데이터 반환
+  return MOCK_STATION_RESPONSE;
 };

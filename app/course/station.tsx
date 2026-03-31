@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, Alert } from "react-native";
+import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import StationCard from "@/src/components/station/StationCard";
@@ -8,53 +8,72 @@ import { useCourseStore } from "@/src/stores/useCourseStore";
 
 /**
  * 중간역 선택 화면
- * 1. 추천된 중간역 후보 2~3개를 카드로 표시
- * 2. 사용자가 하나를 선택
- * 3. 선택 후 조건 입력 화면으로 이동
+ * 1. 출발지 요약 칩 (코랄=나, 블루=상대방)
+ * 2. 추천 역 카드 (선택 시 코랄 보더 + 추천 뱃지)
+ * 3. CTA 버튼
  */
 
 export default function StationScreen() {
-  const { stationCandidates, selectedStation, selectStation } =
-    useCourseStore();
+  const {
+    stationCandidates,
+    selectedStation,
+    selectStation,
+    originA,
+    originB,
+  } = useCourseStore();
   const router = useRouter();
 
   const handleNext = () => {
-    // 1. 선택 검증
     if (!selectedStation) {
       Alert.alert("알림", "만날 역을 선택해주세요.");
       return;
     }
-
-    // 2. 조건 입력 화면으로 이동
     router.push("/course/condition");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* 1. 헤더 */}
-      <Text style={styles.title}>어디서 만날까요?</Text>
-      <Text style={styles.subtitle}>
-        양쪽 모두 이동하기 편한 역을 추천했어요
-      </Text>
+      <View style={styles.headerRow}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Text style={styles.backArrow}>{"\u2190"}</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>중간역 추천</Text>
+      </View>
 
-      {/* 2. 중간역 후보 목록 */}
+      {/* 2. 출발지 요약 칩 */}
+      <View style={styles.originRow}>
+        <View style={[styles.originChip, { backgroundColor: COLORS.primaryLight }]}>
+          <Text style={[styles.originLabel, { color: COLORS.primary }]}>내 출발지</Text>
+          <Text style={styles.originName}>{originA || "미입력"}</Text>
+        </View>
+        <View style={[styles.originChip, { backgroundColor: COLORS.partnerLight }]}>
+          <Text style={[styles.originLabel, { color: COLORS.partner }]}>상대방</Text>
+          <Text style={styles.originName}>{originB || "미입력"}</Text>
+        </View>
+      </View>
+
+      <Text style={styles.subtitle}>양쪽 모두 편한 중간 지점이에요</Text>
+
+      {/* 3. 중간역 후보 목록 */}
       <FlatList
         data={stationCandidates}
         keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <StationCard
             station={item}
             selected={selectedStation?.id === item.id}
             onPress={() => selectStation(item)}
+            isRecommended={index === 0}
           />
         )}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
       />
 
-      {/* 3. 다음 단계 버튼 */}
+      {/* 4. CTA 버튼 */}
       <Button
-        title="이 역으로 정하기"
+        title={selectedStation ? `${selectedStation.stationName}으로 선택` : "역을 선택해주세요"}
         onPress={handleNext}
         disabled={!selectedStation}
       />
@@ -68,17 +87,46 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
     paddingHorizontal: 24,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "800",
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingTop: 12,
+    marginBottom: 16,
+  },
+  backArrow: {
+    fontSize: 20,
     color: COLORS.textPrimary,
-    marginTop: 20,
-    marginBottom: 8,
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: COLORS.textPrimary,
+  },
+  originRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 16,
+  },
+  originChip: {
+    flex: 1,
+    padding: 10,
+    borderRadius: 8,
+  },
+  originLabel: {
+    fontSize: 10,
+    fontWeight: "600",
+    marginBottom: 2,
+  },
+  originName: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: COLORS.textPrimary,
   },
   subtitle: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    marginBottom: 24,
+    fontSize: 12,
+    color: COLORS.textTertiary,
+    marginBottom: 14,
   },
   list: {
     paddingBottom: 16,

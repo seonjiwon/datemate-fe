@@ -5,96 +5,117 @@ import { formatDuration } from "@/src/utils/format";
 import type { StationCandidate } from "@/src/types/station";
 
 /**
- * 중간역 후보 카드
- * 1. 역 이름, 양쪽 소요시간 표시
- * 2. 선택 상태 시 강조 스타일
- * 3. 소요시간 차이가 적을수록 좋은 후보임을 시각적으로 표현
+ * 중간역 후보 카드 — 디자인 시안 반영
+ * 1. 선택 시 코랄 보더 + 연한 배경
+ * 2. 추천 뱃지 (첫 번째 역)
+ * 3. 코랄 도트(나) / 블루 도트(상대방) 소요시간 표시
  */
 
 interface StationCardProps {
   station: StationCandidate;
   selected: boolean;
   onPress: () => void;
+  isRecommended?: boolean;
 }
 
 export default function StationCard({
   station,
   selected,
   onPress,
+  isRecommended = false,
 }: StationCardProps) {
-  const timeDiff = Math.abs(
-    station.travelTimeFromA - station.travelTimeFromB
-  );
-
   return (
     <Card onPress={onPress} selected={selected} style={styles.card}>
-      {/* 1. 역 이름 */}
-      <Text style={styles.stationName}>{station.stationName}</Text>
+      {/* 1. 역 이름 + 추천 뱃지 */}
+      <View style={styles.nameRow}>
+        <View style={styles.nameLeft}>
+          <View
+            style={[
+              styles.dot,
+              { backgroundColor: selected ? COLORS.primary : "#ccc" },
+            ]}
+          />
+          <Text style={styles.stationName}>{station.stationName}</Text>
+        </View>
+        {(isRecommended || selected) && (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>추천</Text>
+          </View>
+        )}
+      </View>
 
-      {/* 2. 양쪽 소요시간 */}
+      {/* 2. 양쪽 소요시간 (컬러 도트) */}
       <View style={styles.timeRow}>
         <View style={styles.timeItem}>
-          <Text style={styles.timeLabel}>A에서</Text>
-          <Text style={styles.timeValue}>
-            {formatDuration(station.travelTimeFromA)}
+          <View style={[styles.timeDot, { backgroundColor: COLORS.primary }]} />
+          <Text style={styles.timeText}>
+            나 {formatDuration(station.travelTimeFromA)}
           </Text>
         </View>
-        <View style={styles.divider} />
         <View style={styles.timeItem}>
-          <Text style={styles.timeLabel}>B에서</Text>
-          <Text style={styles.timeValue}>
-            {formatDuration(station.travelTimeFromB)}
+          <View style={[styles.timeDot, { backgroundColor: COLORS.partner }]} />
+          <Text style={styles.timeText}>
+            상대 {formatDuration(station.travelTimeFromB)}
           </Text>
         </View>
       </View>
-
-      {/* 3. 소요시간 차이 표시 */}
-      <Text style={styles.diffText}>
-        {timeDiff === 0
-          ? "소요시간 동일"
-          : `차이 ${formatDuration(timeDiff)}`}
-      </Text>
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 12,
+    marginBottom: 10,
+  },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  nameLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  dot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
   },
   stationName: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: "700",
     color: COLORS.textPrimary,
-    marginBottom: 12,
+  },
+  badge: {
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 4,
+    backgroundColor: "rgba(244, 63, 94, 0.12)",
+  },
+  badgeText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: COLORS.primary,
   },
   timeRow: {
     flexDirection: "row",
-    alignItems: "center",
+    gap: 14,
+    paddingLeft: 15,
   },
   timeItem: {
-    flex: 1,
+    flexDirection: "row",
     alignItems: "center",
+    gap: 5,
   },
-  timeLabel: {
-    fontSize: 12,
-    color: COLORS.textTertiary,
-    marginBottom: 4,
+  timeDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
   },
-  timeValue: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: COLORS.primaryLight,
-  },
-  divider: {
-    width: 1,
-    height: 32,
-    backgroundColor: COLORS.borderLight,
-  },
-  diffText: {
-    fontSize: 12,
-    color: COLORS.textTertiary,
-    textAlign: "center",
-    marginTop: 10,
+  timeText: {
+    fontSize: 11,
+    color: COLORS.textSecondary,
   },
 });
